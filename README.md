@@ -3,14 +3,9 @@
 Free expense-bill & split maker for students and friends. No login, no backend, no ads.
 Pure HTML / CSS / JavaScript — everything stays in the visitor's browser.
 
-## Deploy on GitHub Pages
-1. Create a repo, upload **everything in this folder** (keep the folder structure).
-2. Settings → Pages → Deploy from branch → `main` / root.
-3. Open `https://<you>.github.io/<repo>/` — done. All paths are relative, so sub-folders work.
-
 ## Edit your details — `js/config.js`
 Developer name/role/tagline, donate UPI id + payee, feedback e-mail, site URL (used in WhatsApp text).
-> Donate UPI is set to `iamhk@ybl` — change it there if your real id is different.
+> Donate UPI is set to `XXX@ybl` — change it there if your real id is different.
 
 ## Releasing an update (PWA)
 Change `VERSION` in `sw.js` (e.g. `paymate-v1.0.1`) and upload. Visitors see a "new version — Reload" bar.
