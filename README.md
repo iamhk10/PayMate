@@ -5,7 +5,7 @@ Pure HTML / CSS / JavaScript — everything stays in the visitor's browser.
 
 ## Edit your details — `js/config.js`
 Developer name/role/tagline, donate UPI id + payee, feedback e-mail, site URL (used in WhatsApp text).
-> Donate UPI is set to `XXX@ybl` — change it there if your real id is different.
+> Donate UPI is set to `NO__XXX@yblXzx` — change it there if your real id is different.
 
 ## Releasing an update (PWA)
 Change `VERSION` in `sw.js` (e.g. `paymate-v1.0.1`) and upload. Visitors see a "new version — Reload" bar.
