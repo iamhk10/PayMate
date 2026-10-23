@@ -1,37 +1,33 @@
-# PayMate
-💸 PayMate – Free expense bill &amp; split maker for friends. Split smart. Settle easy. 🧾 PDF/JPG • WhatsApp • Offline PWA • No login
+# PayMate — Split smart. Settle easy.
 
-# 💸 PayMate — Split smart. Settle easy.
+Free expense-bill & split maker for students and friends. No login, no backend, no ads.
+Pure HTML / CSS / JavaScript — everything stays in the visitor's browser.
 
-Free expense-bill & split maker for college students, roommates and friend groups. 🎓🛒✈️
-No login. No backend. No ads. Everything stays on your device. 🔒
+## Deploy on GitHub Pages
+1. Create a repo, upload **everything in this folder** (keep the folder structure).
+2. Settings → Pages → Deploy from branch → `main` / root.
+3. Open `https://<you>.github.io/<repo>/` — done. All paths are relative, so sub-folders work.
 
-## ✨ Features
-- 👥 Add friends & 🧾 expenses (who paid, who shares)
-- 🤝 Auto totals, per-person share & smart "who pays whom" settlement
-- 🎨 8 stylish bill templates with stickers, emoji & fonts (Campus Classic, Market Mate, Trip Mode, Café Chill, Party Pop, Minimal Pro, Chai Tapri, Neon Night)
-- 👀 Live A4 preview — auto-fits to one page
-- 📄 Download PDF • 🖼️ Download JPG • 🖨️ Print
-- 💬 Copy / send WhatsApp summary
-- 📲 UPI pay QR for every settlement
-- ↩️ Undo / redo • 💾 Drafts • 📦 Backup & restore • 🔗 Share by link
-- 🌙 Dark mode • 📱 Installable PWA • ⚡ Works offline
-- 🇮🇳 ₹ INR only
+## Edit your details — `js/config.js`
+Developer name/role/tagline, donate UPI id + payee, feedback e-mail, site URL (used in WhatsApp text).
+> Donate UPI is set to `iamhk@ybl` — change it there if your real id is different.
 
-## 🚀 Use it
-Open the live site: **https://<your-username>.github.io/<repo-name>/**
+## Releasing an update (PWA)
+Change `VERSION` in `sw.js` (e.g. `paymate-v1.0.1`) and upload. Visitors see a "new version — Reload" bar.
 
-Or just download `index.html` and open it in any browser. Single file, nothing to install!
+## PDF / JPG libraries
+html2canvas 1.4.1 and jsPDF 2.5.1 load from cdnjs (fallback jsDelivr) on first export and are then cached
+for offline use. For offline-from-first-visit, drop `html2canvas.min.js` and `jspdf.umd.min.js` into `js/vendor/`
+and add their local paths first in `CFG.libs` (js/config.js) and in the `SHELL` list of `sw.js`.
 
-## 🌐 Deploy on GitHub Pages
-1. Upload `index.html` (and optional `sw.js` for offline mode)
-2. Settings → Pages → Deploy from branch → `main` / root
-3. Done! 🎉
+## Suggestion form
+Uses FormSubmit → the first message triggers a one-time activation e-mail to the developer address. Falls back to the mail app.
 
-## 🛠️ Built with
-Vanilla HTML • CSS • JavaScript — html2canvas & jsPDF (for PDF/JPG)
+## Features
+8 bill templates (Campus Classic, Market Mate, Trip Mode, Café Chill, Party Pop, Minimal Pro, Chai Tapri, Neon Night)
+with sticker packs · live A4 preview with auto-fit to one page · PDF (multi-page, rows never cut) · JPG · print ·
+WhatsApp summary · exact paise maths with minimal settlements · "Whole ₹" rounding · paste-a-list quick add ·
+undo / redo · settled ticks + confetti · UPI pay QR per settlement · drafts library · backup / restore ·
+share-by-link · dark mode · installable & offline · keyboard shortcuts (N, Ctrl+S/Z/Y/P).
 
-## 👨‍💻 Developer
-Made with 💜 by **ΣTΣЯПITY** — *Building simple tools for students.*
-
-If PayMate saved you time, share it with your friends! 🙏
+Files: `index.html`, `css/`, `js/` (config, storage, bill, templates, export, pwa, app), `fonts/`, `icons/`, `manifest.webmanifest`, `sw.js`.

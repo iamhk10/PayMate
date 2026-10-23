@@ -1,0 +1,518 @@
+/* =========================================================================
+   PayMate — css/bill.css
+   The printed bill ("paper"): shared structure first, then one block per template.
+
+   Rules for this file (so the PDF / JPG looks exactly like the preview):
+   - The paper is always 794px wide (A4 at 96dpi) and at least 1123px tall.
+   - Only things html2canvas can paint: borders (incl. dashed / double), outer
+     box-shadow, text-shadow, linear/radial gradients (single-position stops),
+     rotate/scale transforms, opacity, border-radius, ::before / ::after.
+   - NO filter, backdrop-filter, mix-blend-mode, clip-path, mask, conic-gradient,
+     repeating-*-gradient, inset shadows, outline or background-clip:text.
+   ========================================================================= */
+
+/* ------------------------------------------------------------------ shared */
+.paper {
+  --ink: #1b1f3b; --mute: #6a7090; --acc: #4f46e5; --acc-d: #3730a3; --acc-soft: #eef0ff; --acc2: #14b8a6;
+  --paper: #ffffff; --line: #e3e6f5; --band: #4f46e5; --band-ink: #ffffff;
+  --pos: #0b8a5f; --pos-bg: #d8f5ea; --neg: #d23b2a; --neg-bg: #fde5e0; --even: #6a7090; --even-bg: #eceef8;
+  --f-head: "PM Adventor"; --f-num: "PM Poppins"; --f-hand: "PM Chorus";
+  position: relative; width: 794px; min-height: 1123px; display: flex; flex-direction: column;
+  background: var(--paper); color: var(--ink); overflow: hidden; text-align: left;
+  font-family: "PM Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.35; font-weight: 400;
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+.paper, .paper * { box-sizing: border-box; }
+.paper * { margin: 0; padding: 0; }
+.paper i, .paper em, .paper u { font-style: normal; text-decoration: none; }
+.paper ul { list-style: none; }
+.paper table { border-collapse: separate; border-spacing: 0; width: 100%; table-layout: fixed; }
+.paper b { font-weight: 700; }
+
+.paper .pp-bg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; }
+.paper .pp-stk-layer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 6; pointer-events: none; }
+.paper .pp-top { position: relative; z-index: 3; flex: none; }
+.paper .pp-in { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; gap: 13px; padding: 22px 48px 22px; }
+
+/* header: brand + template name */
+.paper .pp-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 48px; position: relative; z-index: 2; }
+.paper .pp-brand { display: flex; align-items: center; gap: 10px; }
+.paper .pp-logo { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: #fff; color: var(--acc); font: 700 20px/1 "PM Poppins", sans-serif; box-shadow: 0 2px 0 rgba(0, 0, 0, .15); }
+.paper .pp-bn { font: 700 22px/1 var(--f-head), "PM Poppins", sans-serif; letter-spacing: .2px; }
+.paper .pp-tn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; font: 500 12.5px/1 "PM Poppins", sans-serif; background: rgba(255, 255, 255, .22); }
+.paper .pp-tn i { font-size: 15px; line-height: 1; }
+
+/* hero: kicker / title / date + sticker cluster */
+.paper .pp-hero { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 84px; }
+.paper .pp-hero-main { flex: 1; min-width: 0; }
+.paper .pp-kicker { font: 700 11px/1 "PM Poppins", sans-serif; letter-spacing: 2.4px; color: var(--acc); margin-bottom: 8px; }
+.paper .pp-title { font: 700 40px/1.08 var(--f-head), "PM Poppins", sans-serif; overflow-wrap: anywhere; word-break: break-word; color: var(--ink); }
+.paper .pp-title.t-long { font-size: 31px; }
+.paper .pp-title.t-xl { font-size: 25px; }
+.paper .pp-title.is-empty { opacity: .35; }
+.paper .pp-date { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font: 500 13px/1 "PM Poppins", sans-serif; color: var(--mute); }
+.paper .pp-date i { font-size: 14px; }
+.paper .pp-cluster { position: relative; flex: none; width: 150px; height: 92px; }
+.paper .pp-cluster .stk.c1 { left: 6px; top: 20px; }
+.paper .pp-cluster .stk.c2 { left: 80px; top: 2px; }
+
+/* section heading */
+.paper .pp-sec { position: relative; }
+.paper .pp-h { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; font: 700 12px/1 "PM Poppins", sans-serif; letter-spacing: 1.8px; text-transform: uppercase; color: var(--acc); }
+.paper .pp-h em { background: var(--acc-soft); color: var(--acc); border-radius: 99px; padding: 3px 8px; font-size: 11px; letter-spacing: 0; }
+
+/* friends */
+.paper .pp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.paper .pp-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 4px; border-radius: 99px; background: var(--acc-soft); font: 500 13px/1 "PM Poppins", sans-serif; }
+.paper .pp-empty, .paper .pp-even, .paper .pp-none td { color: var(--mute); font-size: 13px; }
+.paper .pp-av { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--avbg, #e0e7ff); color: var(--avink, #4338ca); font-size: 16px; line-height: 1; }
+.paper .pp-av.sm { width: 24px; height: 24px; font-size: 14px; }
+.paper .pp-av b { font-weight: 400; }
+.paper .pp-av .av-i { display: none; font: 700 13px/1 "PM Poppins", sans-serif; }
+
+/* tables */
+.paper .pp-table th { padding: 7px 10px; text-align: left; font: 700 10.5px/1 "PM Poppins", sans-serif; letter-spacing: 1.3px; text-transform: uppercase; color: var(--mute); border-bottom: 2px solid var(--line); }
+.paper .pp-table td { padding: 6px 10px; vertical-align: middle; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.paper .pp-table tr:last-child td { border-bottom: 0; }
+.paper .pp-table .c-qty { width: 104px; text-align: center; white-space: nowrap; }
+.paper .pp-table .c-qty .x { margin-left: 5px; font-size: 11px; color: var(--mute); }
+.paper .pp-table th.c-qty { text-align: center; }
+.paper .pp-table .c-amt { width: 104px; text-align: right; }
+.paper .pp-table th.c-amt, .paper .pp-table th.c-num, .paper .pp-table th.c-bal { text-align: right; }
+.paper .pp-table .c-by { width: 100px; }
+.paper .pp-table-s .c-num { width: 96px; text-align: right; }
+.paper .pp-table-s .c-bal { width: 140px; text-align: right; }
+.paper .pp-cell { display: flex; align-items: center; gap: 9px; }
+.paper .pp-cat { flex: none; width: 24px; text-align: center; font-size: 17px; line-height: 1; }
+.paper .pp-in-name { min-width: 0; }
+.paper .pp-in-name b { font-weight: 600; font-size: 14px; }
+.paper .pp-table small { display: block; margin-top: 2px; font-size: 10.5px; line-height: 1.2; color: var(--mute); font-weight: 400; }
+.paper .c-amt b { font-weight: 700; }
+.paper .pp-bal { display: inline-block; padding: 4px 10px; border-radius: 99px; font: 600 11.5px/1 "PM Poppins", sans-serif; white-space: nowrap; }
+.paper .pp-bal.pos { background: var(--pos-bg); color: var(--pos); }
+.paper .pp-bal.neg { background: var(--neg-bg); color: var(--neg); }
+.paper .pp-bal.even { background: var(--even-bg); color: var(--even); }
+
+/* totals strip */
+.paper .pp-totals { display: flex; gap: 12px; }
+.paper .pp-tot { flex: 1; padding: 10px 15px; border-radius: 16px; background: var(--acc-soft); }
+.paper .pp-tot.big { flex: 1.7; background: var(--acc); color: #fff; }
+.paper .pp-tot span { display: block; margin-bottom: 4px; font: 600 10.5px/1 "PM Poppins", sans-serif; letter-spacing: 1.4px; text-transform: uppercase; opacity: .78; }
+.paper .pp-tot b { display: block; font: 700 27px/1.1 var(--f-head), "PM Poppins", sans-serif; }
+
+/* settlement rows */
+.paper .pp-st { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; padding: 7px 14px; border-radius: 14px; background: var(--acc-soft); }
+.paper .pp-st:last-child { margin-bottom: 0; }
+.paper .pp-who { display: inline-flex; align-items: center; gap: 8px; width: 138px; min-width: 0; }
+.paper .pp-who b { font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
+.paper .pp-pay { flex: 1; display: flex; align-items: center; gap: 6px; color: var(--mute); }
+.paper .pp-pay em { font-size: 11px; font-weight: 500; }
+.paper .pp-pay u { flex: 1; height: 0; border-top: 2px dashed currentColor; opacity: .45; }
+.paper .pp-pay i { font-size: 15px; line-height: 1; font-family: "PM Symbols", "PM Poppins", sans-serif; }
+.paper .pp-amt { min-width: 84px; text-align: right; font: 700 18px/1 "PM Poppins", sans-serif; }
+.paper .pp-rnote { margin-top: 6px; text-align: right; font-size: 10.5px; color: var(--mute); font-style: italic; }
+.paper .pp-ok { padding: 3px 8px; border-radius: 99px; background: var(--pos-bg); color: var(--pos); font: 700 10.5px/1 "PM Poppins", sans-serif; }
+.paper .pp-st.is-done .pp-amt { text-decoration: line-through; opacity: .55; }
+.paper .pp-even { padding: 12px 14px; border-radius: 14px; background: var(--acc-soft); font-weight: 500; color: var(--ink); }
+.paper .pp-stamp { position: absolute; right: 16px; top: -10px; z-index: 4; padding: 6px 13px; border: 3px double var(--pos); border-radius: 10px; color: var(--pos); background: rgba(255, 255, 255, .6); font: 700 14px/1 "PM Poppins", sans-serif; letter-spacing: 1.6px; transform: rotate(-7deg); }
+
+/* handwritten note */
+.paper .pp-note { text-align: center; padding: 4px 30px; font: italic 500 21px/1.25 var(--f-hand), "PM Chorus", cursive; color: var(--acc); transform: rotate(-1.2deg); overflow-wrap: anywhere; }
+
+/* footer */
+.paper .pp-foot { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 8px; }
+.paper .pp-foot-stk { display: flex; justify-content: center; gap: 14px; height: 60px; align-items: center; }
+.paper .pp-foot-stk .stk { position: relative; }
+.paper .pp-foot-txt { font: 500 12px/1.2 "PM Poppins", sans-serif; letter-spacing: .4px; color: var(--mute); }
+.paper .pp-foot-txt i { padding: 0 4px; }
+
+/* stickers (die-cut look: thick white border, soft shadow, slight tilt) */
+.paper .stk { position: absolute; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 50%; background: #fff; border: 4px solid #fff; box-shadow: 0 2px 0 rgba(20, 20, 50, .12), 0 7px 14px rgba(20, 20, 50, .22); transform: rotate(var(--r, 0deg)) scale(var(--s, 1)); }
+.paper .stk i { font-size: 30px; line-height: 1; }
+.paper .stk.e1 { right: -12px; top: 430px; }
+.paper .stk.e2 { left: -14px; top: 720px; }
+.paper .stk.e3 { right: -10px; bottom: 150px; }
+.paper.pp-nostk .pp-cluster { display: none; }
+
+/* "fit to one page" compact mode */
+.paper.pp-fit .pp-in { gap: 11px; padding-top: 20px; padding-bottom: 18px; }
+.paper.pp-fit .pp-head { padding-top: 14px; padding-bottom: 14px; }
+.paper.pp-fit .pp-hero { min-height: 70px; }
+.paper.pp-fit .pp-title { font-size: 32px; }
+.paper.pp-fit .pp-title.t-long { font-size: 26px; }
+.paper.pp-fit .pp-title.t-xl { font-size: 22px; }
+.paper.pp-fit .pp-table td { padding-top: 3px; padding-bottom: 3px; }
+.paper.pp-fit .pp-tot { padding: 9px 13px; }
+.paper.pp-fit .pp-tot b { font-size: 22px; }
+.paper.pp-fit .pp-st { padding: 6px 12px; margin-bottom: 6px; }
+.paper.pp-fit .pp-cluster { height: 70px; transform: scale(.85); transform-origin: right center; }
+.paper.pp-fit .pp-foot-stk { height: 50px; }
+.paper.pp-fit .pp-note { font-size: 18px; padding-top: 0; padding-bottom: 0; }
+.paper.pp-nocat .pp-cat { display: none; }
+
+/* =========================================================================
+   1. CAMPUS CLASSIC — white & indigo, notebook paper, highlighter, school stickers
+   ========================================================================= */
+.tpl-campus { --paper: #fffefa; --acc: #4338ca; --acc-d: #2e2a8f; --acc-soft: #eef0ff; --line: #d9def5; --f-head: "PM Schola"; --note: #4338ca; }
+.tpl-campus .pp-bg {
+  background:
+    linear-gradient(90deg, transparent 66px, #f7b7c2 66px, #f7b7c2 68px, transparent 68px),
+    linear-gradient(#e4e8fa 1px, transparent 1px);
+  background-size: 100% 100%, 100% 32px; background-position: 0 0, 0 18px;
+}
+.tpl-campus .pp-bg .hole { position: absolute; left: 20px; width: 24px; height: 24px; border-radius: 50%; background: #e9ebf5; border: 2px solid #cfd4ec; box-shadow: 0 1px 0 #fff; }
+.tpl-campus .pp-top { color: #fff; background: linear-gradient(135deg, #2e2a8f, #4338ca 55%, #5b54e6); border-bottom: 7px solid #fbbf24; }
+.tpl-campus .pp-logo { color: #4338ca; transform: rotate(-6deg); }
+.tpl-campus .pp-in { padding-left: 92px; }
+.tpl-campus .pp-kicker { color: #c2410c; }
+.tpl-campus .pp-title { color: #25237d; letter-spacing: -.3px; }
+.tpl-campus .pp-title::after { content: ""; display: block; width: 150px; height: 11px; margin-top: 8px; border-radius: 6px; background: #fde68a; transform: rotate(-1deg); }
+.tpl-campus .pp-h { color: #4338ca; padding-bottom: 7px; border-bottom: 2px solid #dfe3fb; }
+.tpl-campus .pp-h em { background: #fde68a; color: #7c4a03; }
+.tpl-campus .pp-table td { border-bottom: 1px dashed #c9d0f0; }
+.tpl-campus .pp-table th { color: #4338ca; border-bottom: 2px solid #c9d0f0; }
+.tpl-campus .pp-in-name b { font-family: "PM Poppins"; }
+.tpl-campus .pp-tot { background: #fff; border: 2px solid #d9def5; box-shadow: 3px 3px 0 #d9def5; }
+.tpl-campus .pp-tot.big { background: #4338ca; border-color: #2e2a8f; box-shadow: 3px 3px 0 #fbbf24; }
+.tpl-campus .pp-st, .tpl-campus .pp-even { background: #fff; border: 2px solid #d9def5; }
+.tpl-campus .pp-chip { background: #fff; border: 2px solid #d9def5; }
+.tpl-campus .pp-note { color: #4338ca; background: #fff9d6; border: 1px solid #f0e29a; border-radius: 6px; margin: 0 40px; box-shadow: 2px 3px 0 rgba(120, 90, 0, .15); }
+.tpl-campus .stk { border-color: #fff; }
+.tpl-campus .stk.e1 { right: -14px; top: 392px; }
+
+/* =========================================================================
+   2. MARKET MATE — green kirana shop: striped awning, price tags, typewriter prices
+   ========================================================================= */
+.tpl-market { --paper: #fffcf0; --acc: #15803d; --acc-d: #0f5f2c; --acc-soft: #e6f6d9; --line: #cfe0b4; --f-head: "PM Poppins"; --f-num: "PM Cursor"; --f-hand: "PM Chorus"; --ink: #17321d; --mute: #66795a; }
+.tpl-market .pp-bg { background: linear-gradient(#f4ecd0 1px, transparent 1px); background-size: 100% 28px; opacity: .55; }
+.tpl-market .pp-top { background: transparent; }
+.tpl-market .awn { display: flex; height: 58px; overflow: hidden; }
+.tpl-market .awn i { flex: none; width: 64px; height: 100%; background: #15803d; border-radius: 0 0 32px 32px / 0 0 24px 24px; box-shadow: 0 4px 0 rgba(0, 0, 0, .10); }
+.tpl-market .awn i:nth-child(even) { background: #fffdf5; border: 2px solid #15803d; border-top: 0; }
+.tpl-market .pp-head { padding-top: 16px; }
+.tpl-market .pp-logo { background: #15803d; color: #fff; border-radius: 50%; }
+.tpl-market .pp-bn { color: #0f5f2c; font-family: "PM Poppins"; }
+.tpl-market .pp-tn { background: #fde047; color: #5b4300; border: 2px dashed #b45309; }
+.tpl-market .pp-kicker { display: inline-block; padding: 5px 10px; background: #ef4444; color: #fff; border-radius: 6px; transform: rotate(-2deg); letter-spacing: 2px; }
+.tpl-market .pp-title { font-family: "PM Poppins"; font-size: 38px; color: #0f5f2c; text-transform: uppercase; letter-spacing: -.5px; line-height: 1.05; }
+.tpl-market .pp-title.t-long { font-size: 29px; } .tpl-market .pp-title.t-xl { font-size: 23px; }
+.tpl-market .pp-hero-main .pp-date { color: #66795a; font-family: "PM Cursor"; font-weight: 700; font-size: 14px; }
+.tpl-market .pp-h { color: #fff; background: #15803d; align-self: flex-start; display: inline-flex; padding: 7px 12px; border-radius: 8px; transform: rotate(-.8deg); box-shadow: 3px 3px 0 #0f5f2c; margin-bottom: 11px; }
+.tpl-market .pp-h em { background: #fde047; color: #5b4300; }
+.tpl-market .pp-chip { background: #fff; border: 2px dashed #86b76a; }
+.tpl-market .pp-table th { color: #0f5f2c; border-bottom: 2px solid #15803d; font-family: "PM Cursor"; font-weight: 700; font-size: 12px; letter-spacing: 1.2px; }
+.tpl-market .pp-table td { border-bottom: 2px dotted #bcd29a; }
+.tpl-market .pp-in-name b { font-weight: 700; }
+.tpl-market .c-amt b, .tpl-market .c-num, .tpl-market .pp-amt { font-family: "PM Cursor"; font-weight: 700; font-size: 15px; }
+.tpl-market .c-amt b { display: inline-block; padding: 3px 9px; background: #fde047; color: #3b2d00; border-radius: 5px 12px 12px 5px; box-shadow: 2px 2px 0 #d9b800; }
+.tpl-market .c-qty, .tpl-market .c-by { font-family: "PM Cursor"; font-weight: 700; }
+.tpl-market .pp-tot { background: #fff; border: 2px dashed #15803d; border-radius: 10px; }
+.tpl-market .pp-tot.big { background: #15803d; border-color: #0f5f2c; color: #fff; box-shadow: 4px 4px 0 #fde047; }
+.tpl-market .pp-tot b { font-family: "PM Cursor"; font-size: 28px; }
+.tpl-market .pp-st, .tpl-market .pp-even { background: #fff; border: 2px dashed #86b76a; border-radius: 10px; }
+.tpl-market .pp-amt { font-size: 18px; color: #0f5f2c; }
+.tpl-market .pp-note { font-family: "PM Chorus"; color: #b91c1c; font-size: 22px; }
+.tpl-market .stk { background: #fff; border: 4px solid #15803d; box-shadow: 3px 3px 0 #fde047, 0 6px 12px rgba(0, 0, 0, .18); }
+.tpl-market .pp-foot-txt { font-family: "PM Cursor"; font-weight: 700; color: #0f5f2c; }
+.tpl-market .pp-foot { border-top: 2px dashed #86b76a; margin: 0 -6px; padding-top: 10px; }
+
+/* =========================================================================
+   3. TRIP MODE — blue & orange boarding pass, perforation, passport-stamp stickers
+   ========================================================================= */
+.tpl-trip { --paper: #f3f9ff; --acc: #1d6fd1; --acc-d: #0b3a6b; --acc-soft: #e2effd; --line: #c5dcf5; --f-head: "PM Adventor"; --ink: #0d2748; --mute: #57749a; --note: #e06d00; }
+.tpl-trip .pp-bg { background: linear-gradient(#e4effb 1px, transparent 1px), linear-gradient(90deg, #e4effb 1px, transparent 1px); background-size: 32px 32px; opacity: .6; }
+.tpl-trip .pp-top { display: flex; flex-direction: column; color: #fff; background: linear-gradient(120deg, #0b3a6b, #1d6fd1); }
+.tpl-trip .pp-head { order: 1; }
+.tpl-trip .trip-bar { order: 2; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 9px 48px; background: #ff8a1f; color: #4a2300; font: 700 11px/1 "PM Adventor", "PM Poppins", sans-serif; letter-spacing: 2.4px; border-top: 3px dashed rgba(255, 255, 255, .7); }
+.tpl-trip .trip-bar span { opacity: .75; font-weight: 400; }
+.tpl-trip .trip-bar em { font-size: 15px; font-style: normal; font-family: "PM Symbols", "PM Poppins", sans-serif; }
+.tpl-trip .pp-logo { color: #1d6fd1; }
+.tpl-trip .pp-tn { background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .45); }
+.tpl-trip .pp-in { padding-top: 22px; }
+.tpl-trip .pp-hero { position: relative; padding: 20px 22px; background: #fff; border: 2px solid #b9d4f2; border-radius: 18px; box-shadow: 0 6px 0 #d3e5f9; }
+.tpl-trip .pp-cluster { padding-left: 0; }
+.tpl-trip .pp-hero::before { content: ""; position: absolute; right: 190px; top: 0; bottom: 0; border-left: 3px dashed #b9d4f2; }
+.tpl-trip .notch { position: absolute; right: 178px; width: 27px; height: 14px; background: #f3f9ff; border: 2px solid #b9d4f2; }
+.tpl-trip .notch.n1 { top: -2px; border-radius: 0 0 14px 14px; border-top: 0; }
+.tpl-trip .notch.n2 { bottom: -2px; border-radius: 14px 14px 0 0; border-bottom: 0; }
+.tpl-trip .pp-hero-main { padding-right: 8px; }
+.tpl-trip .pp-kicker { color: #e06d00; letter-spacing: 3px; }
+.tpl-trip .pp-title { color: #0b3a6b; font-size: 36px; letter-spacing: -.5px; }
+.tpl-trip .pp-title.t-long { font-size: 28px; } .tpl-trip .pp-title.t-xl { font-size: 22px; }
+.tpl-trip .pp-h { color: #0b3a6b; }
+.tpl-trip .pp-h::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: #ff8a1f; transform: rotate(45deg) scale(.8); }
+.tpl-trip .pp-h em { background: #ff8a1f; color: #4a2300; }
+.tpl-trip .pp-chip { background: #fff; border: 2px solid #b9d4f2; }
+.tpl-trip .pp-table { background: #fff; border: 2px solid #b9d4f2; border-radius: 14px; overflow: hidden; }
+.tpl-trip .pp-table th { background: #0b3a6b; color: #fff; border: 0; padding-top: 9px; padding-bottom: 9px; }
+.tpl-trip .pp-table td { border-bottom: 1px dashed #b9d4f2; }
+.tpl-trip .pp-table tbody tr:nth-child(even) td { background: #f3f9ff; }
+.tpl-trip .pp-in-name b { font-family: "PM Adventor"; font-weight: 700; }
+.tpl-trip .c-amt b, .tpl-trip .pp-amt { font-family: "PM Adventor"; font-weight: 700; }
+.tpl-trip .pp-tot { background: #fff; border: 2px solid #b9d4f2; }
+.tpl-trip .pp-tot.big { background: #1d6fd1; border-color: #0b3a6b; box-shadow: 4px 4px 0 #ff8a1f; }
+.tpl-trip .pp-st, .tpl-trip .pp-even { background: #fff; border: 2px solid #b9d4f2; border-left: 7px solid #ff8a1f; }
+.tpl-trip .pp-pay { color: #e06d00; }
+.tpl-trip .pp-note { font-family: "PM Chorus"; color: #e06d00; font-size: 23px; }
+.tpl-trip .stk { background: rgba(255, 255, 255, .85); border: 3px double #1d6fd1; box-shadow: 0 0 0 2px rgba(255, 138, 31, .55); }
+.tpl-trip .stk.c2, .tpl-trip .stk.e2, .tpl-trip .stk.f2 { border-color: #ff8a1f; box-shadow: 0 0 0 2px rgba(29, 111, 209, .45); }
+.tpl-trip .pp-foot::before { content: ""; display: block; width: 260px; height: 34px; background: linear-gradient(90deg, #0d2748 3px, transparent 3px, transparent 6px, #0d2748 6px, #0d2748 7px, transparent 7px, transparent 10px, #0d2748 10px, #0d2748 13px, transparent 13px, transparent 14px, #0d2748 14px, #0d2748 15px, transparent 15px, transparent 19px); background-size: 19px 100%; }
+.tpl-trip .pp-foot-txt { color: #0b3a6b; letter-spacing: 2px; font-size: 11px; text-transform: uppercase; }
+
+/* =========================================================================
+   4. CAFÉ CHILL — cream & espresso, gingham, washi tape, menu-card prices
+   ========================================================================= */
+.tpl-cafe { --paper: #fbf3e4; --acc: #8b5a2b; --acc-d: #5a3a1e; --acc-soft: #f4e4c8; --line: #dcc29a; --f-head: "PM Bonum"; --ink: #4a2f17; --mute: #8a6a47; --note: #a0522d; --pos: #3d7a4a; --pos-bg: #dcefd9; }
+.tpl-cafe .pp-bg { background: linear-gradient(rgba(180, 130, 70, .05) 1px, transparent 1px); background-size: 100% 6px; }
+.tpl-cafe .pp-bg .ring { position: absolute; right: 56px; top: 236px; width: 132px; height: 132px; border-radius: 50%; border: 9px solid rgba(139, 90, 43, .10); box-shadow: 0 0 0 3px rgba(139, 90, 43, .06); }
+.tpl-cafe .gingham { height: 38px; background-color: #fbf3e4; background-image: linear-gradient(90deg, rgba(160, 82, 45, .22) 50%, transparent 50%), linear-gradient(rgba(160, 82, 45, .22) 50%, transparent 50%); background-size: 26px 26px; border-bottom: 3px solid #a0522d; }
+.tpl-cafe .tape { position: absolute; z-index: 5; width: 120px; height: 30px; background: rgba(244, 163, 182, .85); border-left: 5px dotted rgba(255, 255, 255, .8); border-right: 5px dotted rgba(255, 255, 255, .8); box-shadow: 0 2px 4px rgba(0, 0, 0, .12); }
+.tpl-cafe .tape.t1 { left: -26px; top: 18px; transform: rotate(-36deg); }
+.tpl-cafe .tape.t2 { right: -26px; top: 18px; transform: rotate(36deg); background: rgba(167, 219, 196, .9); }
+.tpl-cafe .pp-head { padding-top: 14px; padding-bottom: 14px; border-bottom: 2px dotted #c9a97a; margin: 0 48px; padding-left: 0; padding-right: 0; }
+.tpl-cafe .pp-logo { background: #5a3a1e; color: #fbf3e4; border-radius: 50%; }
+.tpl-cafe .pp-bn { font-family: "PM Bonum"; color: #5a3a1e; font-size: 23px; }
+.tpl-cafe .pp-tn { background: transparent; border: 2px solid #8b5a2b; color: #5a3a1e; }
+.tpl-cafe .pp-kicker { color: #a0522d; letter-spacing: 4px; font-family: "PM Lora"; font-weight: 700; }
+.tpl-cafe .pp-title { font-family: "PM Bonum"; color: #4a2f17; font-size: 38px; letter-spacing: -.3px; }
+.tpl-cafe .pp-title.t-long { font-size: 29px; } .tpl-cafe .pp-title.t-xl { font-size: 23px; }
+.tpl-cafe .pp-title::after { content: "✦  ✦  ✦"; display: block; margin-top: 6px; font: 400 13px/1 "PM Symbols", sans-serif; letter-spacing: 6px; color: #c08a4b; }
+.tpl-cafe .pp-date { font-family: "PM Lora"; font-style: normal; font-weight: 500; }
+.tpl-cafe .pp-h { font-family: "PM Bonum"; font-size: 15px; letter-spacing: .5px; text-transform: none; color: #5a3a1e; border-bottom: 3px double #c9a97a; padding-bottom: 6px; }
+.tpl-cafe .pp-h em { background: #5a3a1e; color: #fbf3e4; font-family: "PM Poppins"; }
+.tpl-cafe .pp-chip { background: #fff8ea; border: 2px dotted #c9a97a; }
+.tpl-cafe .pp-table th { font-family: "PM Lora"; font-weight: 700; letter-spacing: 1px; color: #8b5a2b; border-bottom: 2px solid #c9a97a; }
+.tpl-cafe .pp-table td { border-bottom: 2px dotted #cfb184; }
+.tpl-cafe .pp-in-name b { font-family: "PM Lora"; font-weight: 600; font-size: 15px; }
+.tpl-cafe .c-amt b, .tpl-cafe .pp-amt, .tpl-cafe .c-num { font-family: "PM Bonum"; font-weight: 700; color: #5a3a1e; }
+.tpl-cafe .pp-tot { background: #fff8ea; border: 2px solid #c9a97a; border-radius: 14px; }
+.tpl-cafe .pp-tot.big { background: #5a3a1e; border-color: #3a2410; color: #fbf3e4; box-shadow: 4px 4px 0 #e8c98f; }
+.tpl-cafe .pp-tot b { font-family: "PM Bonum"; }
+.tpl-cafe .pp-st, .tpl-cafe .pp-even { background: #fff8ea; border: 2px dotted #b98a52; }
+.tpl-cafe .pp-pay { color: #a0522d; }
+.tpl-cafe .pp-note { font-family: "PM Chorus"; color: #a0522d; font-size: 23px; }
+.tpl-cafe .stk { background: #fffaf0; border: 4px solid #e9d3ad; box-shadow: 0 0 0 2px #c9a97a, 0 7px 12px rgba(74, 47, 23, .22); }
+.tpl-cafe .pp-foot { padding-bottom: 14px; }
+.tpl-cafe .pp-foot-txt { font-family: "PM Lora"; font-weight: 500; color: #8b5a2b; }
+.tpl-cafe::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22px; z-index: 4; background-color: #fbf3e4; background-image: linear-gradient(90deg, rgba(160, 82, 45, .22) 50%, transparent 50%), linear-gradient(rgba(160, 82, 45, .22) 50%, transparent 50%); background-size: 26px 26px; border-top: 3px solid #a0522d; }
+
+/* =========================================================================
+   5. PARTY POP — hot pink & purple, bunting, confetti, neo-pop hard shadows
+   ========================================================================= */
+.tpl-party { --paper: #fff6fc; --acc: #d4147f; --acc-d: #5b21b6; --acc-soft: #ffe3f3; --line: #1b1030; --ink: #1b1030; --mute: #6b5a86; --f-head: "PM Poppins"; --note: #7c3aed; --pos: #0a7d62; --pos-bg: #c9f7e8; --neg: #c01856; --neg-bg: #ffd6e6; }
+.tpl-party .pp-bg { background-image: radial-gradient(circle, #ff3d9a 4px, transparent 5px), radial-gradient(circle, #ffc233 3px, transparent 4px), radial-gradient(circle, #19c2a0 3px, transparent 4px), radial-gradient(circle, #7c3aed 4px, transparent 5px); background-size: 150px 150px, 110px 110px, 170px 170px, 130px 130px; background-position: 20px 40px, 70px 90px, 120px 20px, 10px 100px; opacity: .35; }
+.tpl-party .pp-bg .blob { position: absolute; border-radius: 50%; }
+.tpl-party .pp-bg .b1 { width: 260px; height: 260px; right: -90px; top: 420px; background: rgba(124, 58, 237, .08); }
+.tpl-party .pp-bg .b2 { width: 220px; height: 220px; left: -80px; top: 800px; background: rgba(255, 61, 154, .08); }
+.tpl-party .pp-top { background: linear-gradient(100deg, #ff2d95, #a21caf 55%, #6d28d9); color: #fff; border-bottom: 4px solid #1b1030; }
+.tpl-party .bunting { display: flex; height: 36px; overflow: hidden; background: #fff6fc; border-bottom: 4px solid #1b1030; }
+.tpl-party .bunting i { flex: none; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 34px solid #ff3d9a; }
+.tpl-party .pp-logo { background: #ffd23f; color: #1b1030; border: 3px solid #1b1030; box-shadow: 3px 3px 0 #1b1030; transform: rotate(-6deg); }
+.tpl-party .pp-bn { text-shadow: 3px 3px 0 #1b1030; font-family: "PM Poppins"; letter-spacing: .5px; }
+.tpl-party .pp-tn { background: #ffd23f; color: #1b1030; border: 3px solid #1b1030; box-shadow: 3px 3px 0 #1b1030; font-weight: 700; }
+.tpl-party .pp-hero { padding: 18px 22px; background: #ffd23f; border: 4px solid #1b1030; border-radius: 20px; box-shadow: 7px 7px 0 #1b1030; }
+.tpl-party .pp-kicker { display: inline-block; padding: 5px 10px; background: #1b1030; color: #ffd23f; border-radius: 99px; letter-spacing: 2.4px; }
+.tpl-party .pp-title { font-family: "PM Poppins"; text-transform: uppercase; font-size: 38px; letter-spacing: -1px; color: #1b1030; text-shadow: 3px 3px 0 #fff; line-height: 1.05; }
+.tpl-party .pp-title.t-long { font-size: 29px; } .tpl-party .pp-title.t-xl { font-size: 23px; }
+.tpl-party .pp-date { color: #1b1030; background: #fff; border: 2px solid #1b1030; border-radius: 99px; padding: 5px 11px; font-weight: 700; }
+.tpl-party .pp-h { display: inline-flex; align-self: flex-start; color: #fff; background: #d4147f; border: 3px solid #1b1030; border-radius: 99px; padding: 6px 13px; box-shadow: 3px 3px 0 #1b1030; margin-bottom: 12px; }
+.tpl-party .pp-items .pp-h { background: #7c3aed; } .tpl-party .pp-shares .pp-h { background: #0ea5a0; } .tpl-party .pp-settle .pp-h { background: #f97316; }
+.tpl-party .pp-h em { background: #fff; color: #1b1030; }
+.tpl-party .pp-chip { background: #fff; border: 3px solid #1b1030; box-shadow: 3px 3px 0 #1b1030; }
+.tpl-party .pp-table { background: #fff; border: 4px solid #1b1030; border-radius: 16px; box-shadow: 6px 6px 0 #1b1030; overflow: hidden; }
+.tpl-party .pp-table th { background: #7c3aed; color: #fff; border: 0; padding-top: 9px; padding-bottom: 9px; }
+.tpl-party .pp-shares .pp-table th { background: #0ea5a0; }
+.tpl-party .pp-table td { border-bottom: 2px dashed #f4a9d2; }
+.tpl-party .pp-in-name b { font-weight: 700; }
+.tpl-party .c-amt b { display: inline-block; padding: 3px 9px; background: #ffe3f3; border: 2px solid #1b1030; border-radius: 8px; }
+.tpl-party .pp-tot { background: #fff; border: 4px solid #1b1030; border-radius: 16px; box-shadow: 5px 5px 0 #1b1030; }
+.tpl-party .pp-tot.big { background: #ff3d9a; color: #fff; text-shadow: 2px 2px 0 #1b1030; }
+.tpl-party .pp-tot:nth-child(2) { background: #19c2a0; } .tpl-party .pp-tot:nth-child(3) { background: #ffd23f; }
+.tpl-party .pp-tot span { opacity: 1; font-weight: 700; }
+.tpl-party .pp-st, .tpl-party .pp-even { background: #fff; border: 3px solid #1b1030; border-radius: 14px; box-shadow: 4px 4px 0 #1b1030; margin-bottom: 11px; }
+.tpl-party .pp-pay { color: #d4147f; } .tpl-party .pp-pay u { opacity: 1; border-top-color: #d4147f; }
+.tpl-party .pp-note { font-family: "PM Poppins"; font-style: normal; font-weight: 700; font-size: 19px; color: #fff; background: #7c3aed; border: 3px solid #1b1030; border-radius: 99px; box-shadow: 4px 4px 0 #1b1030; margin: 2px 60px; padding: 8px 22px; transform: rotate(-1.5deg); }
+.tpl-party .stk { border: 4px solid #1b1030; box-shadow: 4px 4px 0 #1b1030; background: #fff; }
+.tpl-party .stk.c1, .tpl-party .stk.e2, .tpl-party .stk.f2 { background: #ffc2e1; } .tpl-party .stk.c2, .tpl-party .stk.e1, .tpl-party .stk.f1 { background: #c9f0ff; } .tpl-party .stk.e3, .tpl-party .stk.f3 { background: #d8c6ff; }
+.tpl-party .pp-foot-txt { font-weight: 700; color: #1b1030; letter-spacing: 1px; }
+.tpl-party .pp-stamp { border-color: #0a7d62; background: #fff; }
+
+/* =========================================================================
+   6. MINIMAL PRO — black & white, hairlines, typewriter figures, geometric marks
+   ========================================================================= */
+.tpl-minimal { --paper: #ffffff; --ink: #111111; --mute: #7a7a7a; --acc: #111111; --acc-soft: #f4f4f4; --line: #e4e4e4; --f-head: "PM Heros"; --f-num: "PM Cursor"; --pos: #111; --pos-bg: #e9e9e9; --neg: #111; --neg-bg: #fff; --even: #777; --even-bg: #f4f4f4; --f-hand: "PM Cursor"; }
+.tpl-minimal .pp-top { background: #fff; color: #111; border-top: 10px solid #111; border-bottom: 1px solid #111; }
+.tpl-minimal .pp-logo { background: #111; color: #fff; border-radius: 4px; box-shadow: none; }
+.tpl-minimal .pp-bn { font-family: "PM Heros"; text-transform: uppercase; letter-spacing: 4px; font-size: 17px; }
+.tpl-minimal .pp-tn { background: transparent; border: 1px solid #111; border-radius: 3px; text-transform: uppercase; letter-spacing: 1.6px; font-size: 10.5px; font-weight: 700; padding: 7px 11px; }
+.tpl-minimal .pp-tn i { display: none; }
+.tpl-minimal .pp-in { padding-top: 28px; gap: 18px; }
+.tpl-minimal .pp-kicker { color: #111; letter-spacing: 3.4px; font-family: "PM Heros"; }
+.tpl-minimal .pp-kicker::before { content: ""; display: inline-block; width: 26px; height: 2px; background: #111; vertical-align: middle; margin-right: 10px; }
+.tpl-minimal .pp-title { font-family: "PM Heros"; text-transform: uppercase; font-size: 46px; letter-spacing: -2px; line-height: 1; }
+.tpl-minimal .pp-title.t-long { font-size: 34px; } .tpl-minimal .pp-title.t-xl { font-size: 25px; }
+.tpl-minimal .pp-date { font-family: "PM Cursor"; font-weight: 700; color: #111; letter-spacing: .5px; }
+.tpl-minimal .pp-date i { display: none; }
+.tpl-minimal .pp-h { color: #111; font-family: "PM Heros"; letter-spacing: 3px; padding-bottom: 8px; border-bottom: 2px solid #111; }
+.tpl-minimal .pp-h em { background: #111; color: #fff; border-radius: 3px; font-family: "PM Cursor"; font-weight: 700; }
+.tpl-minimal .pp-chip { background: #fff; border: 1px solid #111; border-radius: 3px; padding: 5px 12px 5px 5px; }
+.tpl-minimal .pp-av { background: #111; color: #fff; border-radius: 3px; }
+.tpl-minimal .pp-av .av-e { display: none; } .tpl-minimal .pp-av .av-i { display: block; }
+.tpl-minimal .pp-cat { display: none; }
+.tpl-minimal .pp-table th { font-family: "PM Heros"; color: #111; letter-spacing: 2px; border-bottom: 1px solid #111; }
+.tpl-minimal .pp-table td { border-bottom: 1px solid #e4e4e4; padding-top: 8px; padding-bottom: 8px; }
+.tpl-minimal .pp-in-name b { font-family: "PM Heros"; font-weight: 700; }
+.tpl-minimal .c-amt b, .tpl-minimal .c-num, .tpl-minimal .pp-amt, .tpl-minimal .c-qty { font-family: "PM Cursor"; font-weight: 700; }
+.tpl-minimal .pp-totals { gap: 0; border-top: 2px solid #111; border-bottom: 2px solid #111; }
+.tpl-minimal .pp-tot { background: #fff; border-radius: 0; padding: 14px 16px; border-left: 1px solid #111; }
+.tpl-minimal .pp-tot:first-child { border-left: 0; padding-left: 0; }
+.tpl-minimal .pp-tot.big { background: #fff; color: #111; }
+.tpl-minimal .pp-tot b { font-family: "PM Cursor"; font-weight: 700; font-size: 30px; letter-spacing: -1px; }
+.tpl-minimal .pp-tot span { opacity: 1; color: #7a7a7a; font-family: "PM Heros"; letter-spacing: 2px; }
+.tpl-minimal .pp-bal.pos { background: #111; color: #fff; border-radius: 3px; } .tpl-minimal .pp-bal.neg { background: #fff; color: #111; border: 1px solid #111; border-radius: 3px; } .tpl-minimal .pp-bal.even { border-radius: 3px; }
+.tpl-minimal .pp-st { background: #fff; border-radius: 0; border-bottom: 1px solid #111; padding: 9px 0; margin-bottom: 0; }
+.tpl-minimal .pp-even { background: #fff; border: 1px solid #111; border-radius: 3px; }
+.tpl-minimal .pp-pay { color: #111; } .tpl-minimal .pp-pay u { border-top: 1px solid #111; opacity: .6; }
+.tpl-minimal .pp-pay em { text-transform: uppercase; letter-spacing: 1.5px; font-size: 9.5px; }
+.tpl-minimal .pp-amt { font-size: 19px; }
+.tpl-minimal .pp-ok { background: #111; color: #fff; border-radius: 3px; }
+.tpl-minimal .pp-note { font-family: "PM Cursor"; font-style: normal; font-weight: 400; font-size: 14px; color: #111; transform: none; letter-spacing: .5px; border-top: 1px solid #111; border-bottom: 1px solid #111; padding: 10px 0; margin: 0; }
+.tpl-minimal .pp-note span::before { content: "“"; } .tpl-minimal .pp-note span::after { content: "”"; }
+.tpl-minimal .stk { background: #fff; border: 2px solid #111; box-shadow: none; width: 54px; height: 54px; }
+.tpl-minimal .stk i { font-family: "PM Symbols", sans-serif; font-size: 24px; color: #111; }
+.tpl-minimal .stk.c1 { background: #111; } .tpl-minimal .stk.c1 i { color: #fff; } .tpl-minimal .stk.e2 { background: #111; } .tpl-minimal .stk.e2 i { color: #fff; }
+.tpl-minimal .pp-foot { border-top: 2px solid #111; padding-top: 14px; }
+.tpl-minimal .pp-foot-stk { height: 56px; } .tpl-minimal .pp-foot-stk .stk { width: 40px; height: 40px; }
+.tpl-minimal .pp-foot-stk .stk i { font-size: 18px; }
+.tpl-minimal .pp-foot-txt { font-family: "PM Cursor"; font-weight: 700; color: #111; text-transform: uppercase; letter-spacing: 1.8px; font-size: 11px; }
+.tpl-minimal .pp-stamp { border: 3px solid #111; color: #111; border-radius: 4px; background: #fff; font-family: "PM Heros"; }
+
+/* =========================================================================
+   7. CHAI TAPRI — kraft paper, saffron & chai brown, painted signboard
+   ========================================================================= */
+.tpl-chai { --paper: #f8e7c6; --acc: #b45309; --acc-d: #5b2d0e; --acc-soft: #fbefd5; --line: #d4b27a; --ink: #3f1d0a; --mute: #8c6a3f; --f-head: "PM Bonum"; --f-hand: "PM Chorus"; --note: #8c1c13; --pos: #2f7a3e; --pos-bg: #d9efcf; }
+.tpl-chai .pp-bg { background-image: linear-gradient(rgba(120, 70, 20, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 70, 20, .05) 1px, transparent 1px); background-size: 100% 5px, 7px 100%; }
+.tpl-chai .pp-top { background: #4a2410; color: #ffd66b; border-bottom: 5px solid #e8830c; }
+.tpl-chai .flags { display: flex; height: 16px; overflow: hidden; background: #4a2410; }
+.tpl-chai .flags i { flex: none; width: 64px; height: 100%; background: #8c1c13; }
+.tpl-chai .flags i:nth-child(even) { background: #ffd66b; }
+.tpl-chai .pp-head { border-top: 3px dashed rgba(255, 214, 107, .55); margin-top: 4px; padding-top: 14px; padding-bottom: 14px; }
+.tpl-chai .pp-logo { background: #ffd66b; color: #4a2410; border-radius: 50%; border: 3px solid #e8830c; }
+.tpl-chai .pp-bn { font-family: "PM Bonum"; color: #ffd66b; font-size: 24px; text-shadow: 2px 2px 0 #8c1c13; }
+.tpl-chai .pp-tn { background: #e8830c; color: #3f1d0a; font-weight: 700; border: 2px dashed #ffd66b; }
+.tpl-chai .pp-kicker { color: #8c1c13; letter-spacing: 4px; font-family: "PM Bonum"; }
+.tpl-chai .pp-title { font-family: "PM Bonum"; font-size: 39px; color: #3f1d0a; letter-spacing: -.5px; }
+.tpl-chai .pp-title.t-long { font-size: 30px; } .tpl-chai .pp-title.t-xl { font-size: 23px; }
+.tpl-chai .pp-title::after { content: ""; display: block; width: 190px; height: 8px; margin-top: 8px; border-radius: 4px; background: #e8830c; border-bottom: 3px solid #8c1c13; }
+.tpl-chai .pp-date { font-family: "PM Lora"; font-weight: 600; color: #6b3f16; }
+.tpl-chai .pp-h { font-family: "PM Bonum"; font-size: 14px; letter-spacing: 1px; color: #fff4dc; background: #5b2d0e; align-self: flex-start; display: inline-flex; padding: 7px 14px; border-radius: 4px 14px 4px 14px; box-shadow: 3px 3px 0 #e8830c; margin-bottom: 11px; }
+.tpl-chai .pp-h em { background: #ffd66b; color: #3f1d0a; font-family: "PM Poppins"; }
+.tpl-chai .pp-chip { background: #fff4dc; border: 2px solid #d4b27a; }
+.tpl-chai .pp-table { background: #fff4dc; border: 3px solid #5b2d0e; border-radius: 12px; box-shadow: 4px 4px 0 #d4a85c; overflow: hidden; }
+.tpl-chai .pp-table th { background: #5b2d0e; color: #ffd66b; border: 0; font-family: "PM Bonum"; padding-top: 9px; padding-bottom: 9px; }
+.tpl-chai .pp-table td { border-bottom: 2px dashed #d4b27a; }
+.tpl-chai .pp-in-name b { font-family: "PM Lora"; font-weight: 700; }
+.tpl-chai .c-amt b, .tpl-chai .pp-amt, .tpl-chai .c-num { font-family: "PM Bonum"; font-weight: 700; color: #5b2d0e; }
+.tpl-chai .pp-tot { background: #fff4dc; border: 3px solid #5b2d0e; border-radius: 12px; box-shadow: 3px 3px 0 #d4a85c; }
+.tpl-chai .pp-tot.big { background: #e8830c; border-color: #5b2d0e; color: #2a1206; box-shadow: 4px 4px 0 #5b2d0e; }
+.tpl-chai .pp-tot b { font-family: "PM Bonum"; }
+.tpl-chai .pp-st, .tpl-chai .pp-even { background: #fff4dc; border: 3px solid #5b2d0e; border-radius: 12px; box-shadow: 3px 3px 0 #d4a85c; margin-bottom: 10px; }
+.tpl-chai .pp-pay { color: #8c1c13; }
+.tpl-chai .pp-note { font-family: "PM Chorus"; color: #8c1c13; font-size: 24px; }
+.tpl-chai .stk { background: #fff4dc; border: 4px solid #e8830c; box-shadow: 0 0 0 2px #5b2d0e, 0 7px 12px rgba(63, 29, 10, .25); }
+.tpl-chai .pp-foot { border-top: 3px dashed #b45309; }
+.tpl-chai .pp-foot-txt { font-family: "PM Bonum"; color: #5b2d0e; }
+
+/* =========================================================================
+   8. NEON NIGHT — midnight navy with glowing cyan / magenta / lime
+   ========================================================================= */
+.tpl-night { --paper: #0b0e2a; --ink: #eaecff; --mute: #98a2dc; --acc: #22d3ee; --acc-soft: rgba(34, 211, 238, .10); --line: rgba(160, 175, 255, .22); --f-head: "PM Adventor"; --note: #a3e635; --pos: #6ee7b7; --pos-bg: rgba(52, 211, 153, .16); --neg: #fda4af; --neg-bg: rgba(251, 113, 133, .16); --even: #b5bdf0; --even-bg: rgba(255, 255, 255, .08); }
+.tpl-night { background: linear-gradient(180deg, #080b24 0%, #130f3d 55%, #1d1148 100%); }
+.tpl-night .pp-bg { background-image: radial-gradient(circle, rgba(255, 255, 255, .9) 1px, transparent 2px), radial-gradient(circle, rgba(34, 211, 238, .8) 1.5px, transparent 2.5px), radial-gradient(circle, rgba(244, 114, 182, .8) 1.5px, transparent 2.5px); background-size: 97px 97px, 151px 151px, 211px 211px; background-position: 12px 30px, 70px 90px, 130px 20px; opacity: .4; }
+.tpl-night .pp-top { background: linear-gradient(90deg, rgba(34, 211, 238, .16), rgba(244, 114, 182, .16)); color: #fff; border-bottom: 2px solid #22d3ee; box-shadow: 0 4px 18px rgba(34, 211, 238, .45); }
+.tpl-night .pp-logo { background: #0b0e2a; color: #22d3ee; border: 2px solid #22d3ee; box-shadow: 0 0 12px rgba(34, 211, 238, .8); text-shadow: 0 0 8px #22d3ee; }
+.tpl-night .pp-bn { text-shadow: 0 0 10px rgba(34, 211, 238, .9); }
+.tpl-night .pp-tn { background: rgba(244, 114, 182, .16); border: 1.5px solid #f472b6; color: #ffd1e8; box-shadow: 0 0 12px rgba(244, 114, 182, .5); }
+.tpl-night .pp-kicker { color: #f472b6; text-shadow: 0 0 8px rgba(244, 114, 182, .9); letter-spacing: 3.4px; }
+.tpl-night .pp-title { color: #fff; text-shadow: 0 0 10px rgba(34, 211, 238, .95), 0 0 24px rgba(34, 211, 238, .55); }
+.tpl-night .pp-date { color: #b9c0f5; }
+.tpl-night .pp-h { color: #22d3ee; text-shadow: 0 0 8px rgba(34, 211, 238, .8); padding-bottom: 8px; border-bottom: 1.5px solid rgba(34, 211, 238, .45); }
+.tpl-night .pp-h em { background: rgba(34, 211, 238, .18); color: #a5f3fc; text-shadow: none; border: 1px solid rgba(34, 211, 238, .6); }
+.tpl-night .pp-chip { background: #1a2050; border: 1.5px solid rgba(244, 114, 182, .6); box-shadow: 0 0 10px rgba(244, 114, 182, .3); }
+.tpl-night .pp-av { background: rgba(255, 255, 255, .12); }
+.tpl-night .pp-table { background: #131944; border: 1.5px solid rgba(34, 211, 238, .55); border-radius: 14px; box-shadow: 0 0 16px rgba(34, 211, 238, .28); overflow: hidden; }
+.tpl-night .pp-table th { color: #f9a8d4; border-bottom: 1.5px solid rgba(244, 114, 182, .5); padding-top: 9px; }
+.tpl-night .pp-table td { border-bottom: 1px solid rgba(160, 175, 255, .18); }
+.tpl-night .pp-in-name b { font-family: "PM Adventor"; font-weight: 700; }
+.tpl-night .c-amt b, .tpl-night .pp-amt { font-family: "PM Adventor"; font-weight: 700; color: #a5f3fc; text-shadow: 0 0 8px rgba(34, 211, 238, .7); }
+.tpl-night .pp-tot { background: #141a46; border: 1.5px solid rgba(160, 175, 255, .45); border-radius: 16px; }
+.tpl-night .pp-tot.big { background: linear-gradient(120deg, #0891b2, #7c3aed); border: 1.5px solid #67e8f9; box-shadow: 0 0 20px rgba(34, 211, 238, .6); color: #fff; }
+.tpl-night .pp-tot b { text-shadow: 0 0 10px rgba(255, 255, 255, .55); }
+.tpl-night .pp-st, .tpl-night .pp-even { background: #141a46; border: 1.5px solid rgba(163, 230, 53, .55); box-shadow: 0 0 12px rgba(163, 230, 53, .25); }
+.tpl-night .pp-pay { color: #a3e635; } .tpl-night .pp-pay u { opacity: .8; }
+.tpl-night .pp-note { font-family: "PM Chorus"; color: #bef264; text-shadow: 0 0 10px rgba(163, 230, 53, .75); font-size: 23px; }
+.tpl-night .stk { background: #151a4a; border: 3px solid #22d3ee; box-shadow: 0 0 14px rgba(34, 211, 238, .8); }
+.tpl-night .stk.c2, .tpl-night .stk.e2, .tpl-night .stk.f2 { border-color: #f472b6; box-shadow: 0 0 14px rgba(244, 114, 182, .8); }
+.tpl-night .stk.e3, .tpl-night .stk.f3 { border-color: #a3e635; box-shadow: 0 0 14px rgba(163, 230, 53, .75); }
+.tpl-night .pp-foot-txt { color: #b9c0f5; text-shadow: 0 0 6px rgba(34, 211, 238, .5); }
+.tpl-night .pp-stamp { background: rgba(11, 14, 42, .85); border-color: #6ee7b7; color: #6ee7b7; box-shadow: 0 0 12px rgba(110, 231, 183, .6); }
+
+/* =========================================================================
+   COMPACT ("fit to one page") refinements — applied after every template block
+   so that a typical bill (≈4 friends, ≈6 items) lands on exactly one A4 page.
+   ========================================================================= */
+.paper.pp-fit .pp-h { margin-bottom: 6px; }
+.paper.pp-fit .pp-chip { padding-top: 2px; padding-bottom: 2px; }
+.paper.pp-fit .pp-table th { padding-top: 5px; padding-bottom: 5px; }
+.paper.pp-fit .pp-foot { gap: 4px; padding-top: 4px; }
+.paper.pp-fit .pp-foot-stk { height: 46px; }
+.paper.pp-fit .pp-foot-stk .stk { transform: rotate(var(--r, 0deg)) scale(.82); }
+.paper.pp-fit .pp-note { margin-top: 0; margin-bottom: 0; }
+.paper.pp-fit .pp-date { margin-top: 6px; }
+.paper.pp-fit .pp-kicker { margin-bottom: 5px; }
+
+.tpl-market.pp-fit .awn { height: 38px; }
+.tpl-market.pp-fit .awn i { border-radius: 0 0 32px 32px / 0 0 16px 16px; }
+.tpl-market.pp-fit .pp-h { padding: 4px 10px; margin-bottom: 7px; }
+.tpl-market.pp-fit .pp-head { padding-top: 10px; padding-bottom: 8px; }
+.tpl-market.pp-fit .pp-foot { padding-top: 6px; }
+
+.tpl-trip.pp-fit .trip-bar { padding: 6px 48px; }
+.tpl-trip.pp-fit .pp-hero { padding: 12px 20px; min-height: 0; }
+.tpl-trip.pp-fit .pp-foot::before { height: 22px; }
+.tpl-trip.pp-fit .pp-in { padding-top: 16px; }
+
+.tpl-cafe.pp-fit .gingham { height: 26px; }
+.tpl-cafe.pp-fit .pp-title::after { margin-top: 2px; }
+.tpl-cafe.pp-fit::after { height: 16px; }
+.tpl-cafe.pp-fit .pp-head { padding-top: 8px; padding-bottom: 8px; }
+
+.tpl-party.pp-fit .bunting { height: 26px; }
+.tpl-party.pp-fit .bunting i { border-top-width: 24px; border-left-width: 16px; border-right-width: 16px; }
+.tpl-party.pp-fit .pp-hero { padding: 10px 20px; min-height: 0; box-shadow: 5px 5px 0 #1b1030; }
+.tpl-party.pp-fit .pp-h { padding: 3px 11px; margin-bottom: 8px; }
+.tpl-party.pp-fit .pp-title { font-size: 31px; }
+.tpl-party.pp-fit .pp-st { margin-bottom: 8px; padding-top: 4px; padding-bottom: 4px; }
+.tpl-party.pp-fit .pp-note { padding: 4px 20px; font-size: 16px; }
+.tpl-party.pp-fit .pp-tot { padding: 7px 13px; }
+.tpl-party.pp-fit .pp-table td { padding-top: 2px; padding-bottom: 2px; }
+.tpl-party.pp-fit .pp-in { gap: 10px; }
+.tpl-party.pp-fit .pp-chip { box-shadow: 2px 2px 0 #1b1030; }
+
+.tpl-chai.pp-fit .flags { height: 10px; }
+.tpl-chai.pp-fit .pp-head { padding-top: 9px; padding-bottom: 9px; }
+.tpl-chai.pp-fit .pp-h { padding: 4px 12px; margin-bottom: 7px; }
+.tpl-chai.pp-fit .pp-title::after { margin-top: 4px; height: 6px; }
+.tpl-chai.pp-fit .pp-st { margin-bottom: 7px; }
+.tpl-party.pp-fit .pp-in { gap: 8px; padding-top: 14px; padding-bottom: 12px; }
+.tpl-party.pp-fit .pp-title { font-size: 28px; }
+.tpl-party.pp-fit .pp-title.t-long { font-size: 23px; } .tpl-party.pp-fit .pp-title.t-xl { font-size: 19px; }
+.tpl-party.pp-fit .pp-date { margin-top: 4px; padding: 3px 10px; }
+.tpl-party.pp-fit .pp-kicker { padding: 3px 9px; margin-bottom: 3px; }
+.tpl-party.pp-fit .pp-st { margin-bottom: 6px; border-width: 2px; box-shadow: 3px 3px 0 #1b1030; }
+.tpl-party.pp-fit .pp-table { border-width: 3px; box-shadow: 4px 4px 0 #1b1030; }
+.tpl-party.pp-fit .pp-tot { border-width: 3px; box-shadow: 3px 3px 0 #1b1030; }
+.tpl-party.pp-fit .pp-foot-stk { height: 38px; }
+.tpl-party.pp-fit .pp-head { padding-top: 10px; padding-bottom: 10px; }
+.tpl-market.pp-fit .pp-in { gap: 9px; }
