@@ -1,0 +1,26 @@
+{
+  "name": "PayMate — Split smart. Settle easy.",
+  "short_name": "PayMate",
+  "description": "Free expense bill & split maker for friends, college students and groups. PDF / JPG bills, WhatsApp summary, works offline.",
+  "id": "./",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#eef0ff",
+  "theme_color": "#4f46e5",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "New bill", "short_name": "New bill", "description": "Start a fresh expense bill", "url": "./?action=new", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Add expense", "short_name": "Add expense", "description": "Add an expense to the current bill", "url": "./?action=add", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}
