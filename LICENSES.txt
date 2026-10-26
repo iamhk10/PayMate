@@ -1,9 +1,0 @@
-PayMate bundles small SUBSET copies of these open-source fonts (self-hosted, so the app works offline):
-
-- Poppins (Indian Type Foundry) ............ SIL Open Font License 1.1
-- Lora (Cyreal) ........................... SIL Open Font License 1.1
-- TeX Gyre Adventor / Bonum / Schola / Heros / Cursor / Chorus
-  (GUST e-foundry) ........................ GUST Font License (free to use, embed and redistribute)
-- DejaVu Sans (symbols subset) ............ Bitstream Vera / DejaVu license (free to use and redistribute)
-
-The QR encoder in js/vendor/qrcode.js is the MIT-licensed "qrcode-generator" by Kazuhiko Arase.
