@@ -10,7 +10,7 @@
    HOW TO RELEASE AN UPDATE: change VERSION below, upload the files. Visitors get a
    small "A new version is ready — Reload" bar.
    ========================================================================= */
-const VERSION = 'paymate-v1.0.0';
+const VERSION = 'paymate-v1.0.1';
 const LIBS = 'paymate-libs-v1';
 
 const SHELL = [
