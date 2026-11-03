@@ -399,6 +399,21 @@ body.has-modal { overflow: hidden; }
 .cat-btn { width: 52px; flex: none; border: 1.5px solid var(--line); border-radius: 14px; background: var(--field); font-size: 1.5rem; }
 .cat-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding: 10px; border-radius: 14px; background: var(--card-2); }
 .cat-pick button, .emoji-grid button { width: 40px; height: 40px; border: 0; border-radius: 12px; background: var(--card); font-size: 1.3rem; box-shadow: 0 1px 3px rgba(31, 35, 90, .1); }
+/* item suggestions under the name field */
+.sug { margin-top: 10px; }
+.sug-h { font-size: .72rem; font-weight: 600; color: var(--mute); margin: 0 2px 6px; }
+.sug-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.sug-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 4px 13px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--field); font-weight: 600; font-size: .86rem; color: var(--ink); transition: background .15s, border-color .15s, transform .12s; }
+.sug-chip:active { transform: scale(.96); }
+.sug-chip:hover, .sug-chip[aria-selected="true"] { background: var(--acc-soft); border-color: var(--acc); }
+.sug-list { display: flex; flex-direction: column; gap: 2px; padding: 6px; border-radius: 16px; background: var(--card-2); }
+.sug-row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 6px 10px; border: 0; border-radius: 12px; background: transparent; text-align: left; color: var(--ink); }
+.sug-row:hover, .sug-row[aria-selected="true"] { background: var(--acc-soft); }
+.sug-row:active { transform: scale(.985); }
+.sug-em { flex: none; width: 28px; text-align: center; font-size: 1.3rem; }
+.sug-nm { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sug-nm mark { background: none; color: var(--acc); font-weight: 800; }
+.sug-hint { flex: none; font-size: .76rem; font-weight: 600; color: var(--mute); }
 .emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 .emoji-grid button[aria-pressed="true"] { background: var(--acc); box-shadow: 0 4px 12px rgba(79, 70, 229, .4); }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
