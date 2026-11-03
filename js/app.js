@@ -356,14 +356,185 @@
     }
   });
 
-  var BASE_ITEMS = ['Chai', 'Samosa', 'Pizza', 'Burger', 'Maggi', 'Momos', 'Biryani', 'Cold drinks', 'Ice cream', 'Snacks', 'Lunch', 'Dinner', 'Breakfast', 'Cab', 'Auto fare', 'Petrol', 'Bus tickets', 'Train tickets', 'Movie tickets', 'Hotel room', 'Groceries', 'Printouts', 'Recharge', 'Gift', 'Cake', 'Tip'];
+  // [name, emoji, other spellings / Hindi-Hinglish words that should also find it, separated by |]
+  var CATALOG = [
+    ['Chai', '🫖', 'tea|chay|chaay|cutting chai|chai tapri'], ['Coffee', '☕', 'cofee|kofi|cappuccino|latte|espresso'], ['Cold coffee', '🥤', 'cold cofee|frappe|iced coffee'],
+    ['Samosa', '🥟', 'samosha|kachori'], ['Pizza', '🍕', 'piza|pizzas'], ['Burger', '🍔', 'berger|burgur'], ['Sandwich', '🥪', 'sandwitch|sub|grilled sandwich'],
+    ['Roll', '🌯', 'kathi roll|frankie|wrap|egg roll'], ['Maggi', '🍜', 'magi|noodles|instant noodles'], ['Chowmein', '🍜', 'chow mein|hakka noodles'],
+    ['Momos', '🥟', 'momo|dumplings'], ['Pasta', '🍝', 'macaroni'], ['Fries', '🍟', 'french fries|finger chips'], ['Pani puri', '🥙', 'golgappa|gol gappe|puchka|panipuri'],
+    ['Chole bhature', '🍛', 'chhole bhature|chole kulche|chhole'], ['Biryani', '🍛', 'briyani|biriyani|pulao'], ['Thali', '🍛', 'meal|mess|full plate'],
+    ['Paneer', '🧀', 'panir|paneer tikka|butter paneer'], ['Chicken', '🍗', 'murga|tandoori|chiken'], ['Paratha', '🫓', 'parantha|aloo paratha|roti|naan'],
+    ['Dosa', '🍛', 'idli|uttapam|sambar'], ['Breakfast', '🍳', 'nashta|nasta|poha|upma|egg|omelette'], ['Lunch', '🍱', 'khana'], ['Dinner', '🍽️', 'raat ka khana|supper'],
+    ['Cold drinks', '🥤', 'cold drink|colddrink|coke|pepsi|sprite|soda|cola|thums up'], ['Juice', '🧃', 'jus|shake|milkshake|smoothie'], ['Lassi', '🥛', 'chaas|buttermilk'],
+    ['Water bottle', '💧', 'pani|paani|water|bisleri'], ['Ice cream', '🍦', 'icecream|kulfi|gelato|cone'], ['Cake', '🎂', 'bday|birthday cake|pastry'],
+    ['Sweets', '🍬', 'mithai|jalebi|laddu|gulab jamun|rasgulla'], ['Chocolate', '🍫', 'choclate|chocolates|dairy milk'],
+    ['Snacks', '🍿', 'snack|chips|namkeen|kurkure|biscuit|biscuits|popcorn'], ['Fruits', '🍎', 'fruit|fal|apple|banana|mango|grapes|orange'],
+    ['Groceries', '🛒', 'grocery|kirana|ration|sabzi|vegetables|veggies|atta|oil|milk|doodh'],
+    ['Cab', '🚕', 'uber|ola|rapido|taxi|cab fare'], ['Auto fare', '🚕', 'auto|rickshaw|riksha|e-rickshaw|toto'], ['Bike ride', '🏍️', 'bike taxi|rapido bike'],
+    ['Petrol', '⛽', 'fuel|diesel|cng|patrol|petrol pump'], ['Bus tickets', '🚌', 'bus|bus ticket|bus fare'], ['Train tickets', '🚆', 'train|train ticket|railway|irctc|rail'],
+    ['Metro', '🚇', 'metro card|metro ticket'], ['Flight tickets', '✈️', 'flight|plane|air ticket'], ['Toll', '🅿️', 'toll tax|fastag'], ['Parking', '🅿️', 'parking fee'],
+    ['Movie tickets', '🎬', 'movie|cinema|film|pvr|inox|show tickets'], ['Hotel room', '🏨', 'hotel|stay|hostel|resort|airbnb|room rent|lodge'], ['Camping', '⛺', 'tent|campfire|bonfire'],
+    ['Entry tickets', '🎟️', 'entry|entry fee|pass|admission'], ['Games', '🎮', 'gaming|bowling|arcade|turf|cricket|football'],
+    ['Printouts', '🖨️', 'print|printing|xerox|photocopy|copy'], ['Stationery', '✏️', 'pen|notebook|register'], ['Books', '📚', 'book|notes|guide'],
+    ['Recharge', '📶', 'wifi|wi-fi|internet|data pack|sim|mobile recharge'], ['Medicine', '💊', 'medical|dawai|dawa|pharmacy|tablet|doctor'],
+    ['Gift', '🎁', 'present|flowers|flower|bouquet|gifts'], ['Party', '🎉', 'decoration|decor|balloons|dj|party supplies'], ['Laundry', '🧺', 'dhobi|washing|iron|press'],
+    ['Electricity bill', '💡', 'bijli|light bill|current bill'], ['Gas cylinder', '🔥', 'lpg|cylinder|gas'], ['Rent', '🏠', 'room rent|house rent|kiraya'],
+    ['Haircut', '💈', 'salon|barber|hair cut|shaving'], ['Shopping', '🛍️', 'clothes|shirt|tshirt|shoes|bag|kapde'], ['Tip', '🪙', 'donation|charity|bakshish']
+  ];
+  var DEFAULT_PICKS = ['Chai', 'Samosa', 'Lunch', 'Snacks', 'Cab', 'Movie tickets', 'Groceries', 'Petrol'];
   var CAT_CHOICES = ['🧾', '🍽️', '🫖', '☕', '🍕', '🍔', '🥟', '🍜', '🍛', '🍦', '🥤', '🍿', '🛒', '🚕', '🚌', '⛽', '🏨', '🎬', '🎮', '📚', '📶', '💊', '🎁', '🎉', '🎂', '🛍️', '🎟️', '💡'];
 
-  function fillSuggestions() {
-    var recent = ST.settings().recent || [], seen = {}, out = [];
-    recent.concat(BASE_ITEMS).forEach(function (n) { var k = String(n).toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(n); } });
-    $('itemSuggest').innerHTML = out.slice(0, 40).map(function (n) { return '<option value="' + esc(n) + '">'; }).join('');
+  /* ---- smart item suggestions (replaces the browser's <datalist>) ----
+     Your own past items come first (with the price you used last time), then a built-in list of
+     everyday items with Hindi / Hinglish names. Typos are fine: "piza" → Pizza, "chay" → Chai.
+     Picking one fills the name, the emoji and the last price. */
+  var sug = { list: [], hl: -1 };
+
+  function sKey(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9ऀ-ॿ]+/g, ' ').trim(); }
+
+  /** edit distance that also counts a swapped pair of letters as one mistake */
+  function editDist(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    var prev2 = null, prev = [], i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      var cur = [i];
+      for (j = 1; j <= b.length; j++) {
+        var v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+        if (i > 1 && j > 1 && a.charAt(i - 1) === b.charAt(j - 2) && a.charAt(i - 2) === b.charAt(j - 1)) v = Math.min(v, prev2[j - 2] + 1);
+        cur[j] = v;
+      }
+      prev2 = prev; prev = cur;
+    }
+    return prev[b.length];
   }
+
+  /** how well the typed text q matches one spelling t (both already normalised); 0 = no match */
+  function termScore(t, q, qc) {
+    if (t === q) return 100;
+    if (t.indexOf(q) === 0) return 90;
+    var tc = t.replace(/ /g, ''), words = t.split(' '), qw = q.split(' '), i, j;
+    if (qc.length > 1 && tc.indexOf(qc) === 0) return 88;
+    var all = true;
+    for (i = 0; i < qw.length && all; i++) {
+      var hit = false;
+      for (j = 0; j < words.length; j++) if (words[j].indexOf(qw[i]) === 0) { hit = true; break; }
+      all = hit;
+    }
+    if (all) return 75;
+    if (q.length >= 2 && t.indexOf(q) > -1) return 55;
+    if (qc.length >= 4) {                       // typo tolerance only once 4+ letters are typed, so short words don't match random items
+      var max = qc.length >= 6 ? 2 : 1, best = max + 1, d;
+      for (j = 0; j < words.length; j++) {
+        var w = words[j];
+        d = editDist(qc, w, max);
+        if (qc.length >= 5) d = Math.min(d, editDist(qc, w.slice(0, qc.length), max));   // half-typed word with a typo
+        if (d < best) best = d;
+      }
+      if (qc.length >= 5) { d = editDist(qc, tc.slice(0, qc.length), max); if (d < best) best = d; }
+      if (best <= max) return 48 - best * 8;
+    }
+    return 0;
+  }
+
+  /** everything we can suggest: your history + the built-in catalogue (merged by name) */
+  function suggestPool() {
+    var s = ST.settings(), hist = s.items && typeof s.items === 'object' ? s.items : {}, pool = [], by = {};
+    function add(p) { by[p.key] = p; pool.push(p); }
+    Object.keys(hist).forEach(function (k) {
+      var h = hist[k]; if (!h || typeof h.n !== 'string' || !h.n) return;
+      var key = sKey(h.n); if (!key || by[key]) return;
+      add({ key: key, n: h.n, c: typeof h.c === 'string' && h.c && h.c.length <= 8 ? h.c : B.guessCat(h.n), a: +h.a > 0 ? +h.a : 0, k: +h.k || 1, t: +h.t || 0, mine: true, terms: [key] });
+    });
+    (Array.isArray(s.recent) ? s.recent : []).forEach(function (n) {          // names saved by the older version
+      var key = sKey(n); if (key && !by[key]) add({ key: key, n: String(n), c: B.guessCat(n), a: 0, k: 1, t: 0, mine: true, terms: [key] });
+    });
+    CATALOG.forEach(function (c) {
+      var key = sKey(c[0]), alias = c[2].split('|').map(sKey).filter(Boolean), p = by[key];
+      if (p) { p.terms = p.terms.concat(alias); return; }
+      add({ key: key, n: c[0], c: c[1], a: 0, k: 0, t: 0, mine: false, terms: [key].concat(alias) });
+    });
+    return pool;
+  }
+
+  function suggestFor(q, max) {
+    var pool = suggestPool(), k = sKey(q), qc = k.replace(/ /g, ''), out = [];
+    if (!k) {                                                                 // nothing typed yet → quick picks
+      var mine = pool.filter(function (p) { return p.mine; }).sort(function (a, b) { return (b.t - a.t) || (b.k - a.k); }).slice(0, max);
+      var have = {}; mine.forEach(function (p) { have[p.key] = 1; });
+      DEFAULT_PICKS.forEach(function (n) {
+        if (mine.length >= max) return;
+        var key = sKey(n), p = pool.filter(function (x) { return x.key === key; })[0];
+        if (p && !have[key]) { have[key] = 1; mine.push(p); }
+      });
+      return mine;
+    }
+    pool.forEach(function (p) {
+      var best = 0;
+      p.terms.forEach(function (t, i) { var sc = termScore(t, k, qc) + (i === 0 ? 3 : 0); if (sc > best) best = sc; });
+      if (best >= 30) out.push({ p: p, s: best + (p.mine ? 8 : 0) + Math.min(12, p.k * 2) });
+    });
+    out.sort(function (a, b) { return (b.s - a.s) || (b.p.t - a.p.t) || (a.p.n.length - b.p.n.length); });
+    return out.slice(0, max).map(function (o) { return o.p; });
+  }
+
+  function emojiFor(name) {
+    var k = sKey(name);
+    if (k) { var pool = suggestPool(); for (var i = 0; i < pool.length; i++) if (pool[i].terms.indexOf(k) > -1) return pool[i].c; }
+    return B.guessCat(name);
+  }
+
+  function hideSuggest() { var b = $('sugBox'); b.hidden = true; b.innerHTML = ''; sug.list = []; sug.hl = -1; $('eName').setAttribute('aria-expanded', 'false'); }
+
+  function renderSuggest() {
+    var q = $('eName').value, k = sKey(q), small = window.innerHeight < 640;
+    var list = suggestFor(q, k ? (small ? 3 : 5) : (small ? 4 : 8));
+    sug.list = list; sug.hl = -1;
+    if (!list.length) { hideSuggest(); return; }
+    var h;
+    if (!k) {
+      h = '<div class="sug-h">' + (list.some(function (p) { return p.mine; }) ? 'Recent &amp; quick picks' : 'Quick picks') + '</div><div class="sug-chips" role="listbox">' +
+        list.map(function (p, i) { return '<button type="button" class="sug-chip" role="option" aria-selected="false" data-i="' + i + '"><span aria-hidden="true">' + esc(p.c) + '</span>' + esc(p.n) + '</button>'; }).join('') + '</div>';
+    } else {
+      var ql = q.trim().toLowerCase();
+      h = '<div class="sug-list" role="listbox">' + list.map(function (p, i) {
+        var nm = esc(p.n), at = p.n.toLowerCase().indexOf(ql);
+        if (at > -1 && ql) nm = esc(p.n.slice(0, at)) + '<mark>' + esc(p.n.slice(at, at + ql.length)) + '</mark>' + esc(p.n.slice(at + ql.length));
+        return '<button type="button" class="sug-row" role="option" aria-selected="false" data-i="' + i + '"><span class="sug-em" aria-hidden="true">' + esc(p.c) + '</span><span class="sug-nm">' + nm + '</span>' +
+          (p.a ? '<span class="sug-hint" title="Price you used last time">₹' + B.num(B.toPaise(p.a)) + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    $('sugBox').innerHTML = h; $('sugBox').hidden = false; $('eName').setAttribute('aria-expanded', 'true');
+  }
+
+  function moveSuggest(d) {
+    var els = $('sugBox').querySelectorAll('[data-i]'); if (!els.length) return;
+    sug.hl = (sug.hl + d + els.length) % els.length;
+    Array.prototype.forEach.call(els, function (el, i) { el.setAttribute('aria-selected', i === sug.hl ? 'true' : 'false'); });
+    if (els[sug.hl].scrollIntoView) els[sug.hl].scrollIntoView({ block: 'nearest' });
+  }
+
+  function pickSuggest(i) {
+    var p = sug.list[i]; if (!p) return;
+    $('eName').value = p.n; editing.cat = p.c; drawCat();
+    var amt = $('eAmount'), filled = false;
+    if (p.a > 0 && !(B.cleanAmount(amt.value) > 0)) { amt.value = String(p.a); filled = true; }
+    hideSuggest(); drawCalc();
+    amt.focus(); if (filled) { try { amt.select(); } catch (e) {} }
+  }
+
+  $('eName').addEventListener('focus', function () { if (!this.value.trim()) renderSuggest(); });
+  $('eName').addEventListener('keydown', function (e) {
+    var open = !$('sugBox').hidden && sug.list.length;
+    if (!open) { if (e.key === 'ArrowDown') { e.preventDefault(); renderSuggest(); } return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); moveSuggest(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moveSuggest(-1); }
+    else if (e.key === 'Enter' && sug.hl > -1) { e.preventDefault(); pickSuggest(sug.hl); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); hideSuggest(); }
+  });
+  $('sugBox').addEventListener('mousedown', function (e) { e.preventDefault(); });   // keep the keyboard open while tapping
+  $('sugBox').addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) pickSuggest(+b.dataset.i); });
+  $('expForm').addEventListener('focusin', function (e) { if (e.target !== $('eName') && !$('sugBox').contains(e.target)) hideSuggest(); });
 
   function openExpense(id) {
     if (!S.friends.length) {
@@ -380,7 +551,7 @@
     $('expTitle').textContent = ex ? 'Edit expense' : 'Add expense';
     $('eName').value = ex ? ex.name : ''; $('eAmount').value = ex ? String(ex.amount || '') : ''; $('eQty').value = ex ? B.fmtQty(ex.qty) : '1';
     $('eDelete').hidden = !ex; $('eSaveMore').hidden = !!ex; $('eErr').hidden = true; $('catPick').hidden = true;
-    fillSuggestions(); drawPickers(); drawCat(); drawCalc();
+    hideSuggest(); drawPickers(); drawCat(); drawCalc();
     openModal('expModal');
     if (!ex) setTimeout(function () { $('eName').focus(); }, 120);
   }
@@ -403,7 +574,7 @@
       : 'Type the price of <b>one</b> item and the quantity — PayMate does the rest.';
   }
 
-  $('eName').addEventListener('input', function () { if (editing.catAuto) { editing.cat = B.guessCat(this.value); drawCat(); } });
+  $('eName').addEventListener('input', function () { if (editing.catAuto) { editing.cat = emojiFor(this.value); drawCat(); } renderSuggest(); });
   $('eAmount').addEventListener('input', drawCalc);
   $('eQty').addEventListener('input', drawCalc);
   function stepQty(d) {
@@ -441,7 +612,13 @@
     else { if (S.expenses.length >= B.LIMITS.expenses) { toast('That is the maximum of ' + B.LIMITS.expenses + ' expenses for one bill'); return; } S.expenses.push(rec); }
     // remember for next time
     var s = ST.settings(), rc = (s.recent || []).filter(function (n) { return n.toLowerCase() !== name.toLowerCase(); }); rc.unshift(name);
-    s.recent = rc.slice(0, 30); s.lastPayer = editing.paid; ST.set('settings', s);
+    s.recent = rc.slice(0, 30); s.lastPayer = editing.paid;
+    // item history: remembers the emoji, the last price and how often you use it (powers the suggestions)
+    var hist = s.items && typeof s.items === 'object' ? s.items : {}, hk = sKey(name), prev = hist[hk] || {};
+    hist[hk] = { n: name, c: editing.cat, a: amt, k: (prev.k || 0) + (editing.id ? 0 : 1), t: Date.now() };
+    var hkeys = Object.keys(hist);
+    if (hkeys.length > 80) hkeys.sort(function (x, y) { return (hist[x].t || 0) - (hist[y].t || 0); }).slice(0, hkeys.length - 80).forEach(function (x) { delete hist[x]; });
+    s.items = hist; ST.set('settings', s);
     sampleUntouched = false;
     commit('struct');
     var row = document.querySelector('.exp[data-id="' + rec.id + '"]'); if (row) row.classList.add('flash');
@@ -449,7 +626,7 @@
       toast('Added “' + name + '” ✓');
       editing = { id: null, cat: '🧾', catAuto: true, paid: editing.paid, all: true, with: S.friends.map(function (f) { return f.id; }) };
       $('eName').value = ''; $('eAmount').value = ''; $('eQty').value = '1'; drawPickers(); drawCat(); drawCalc();
-      $('eName').focus();
+      $('eName').focus(); renderSuggest();
     } else { closeModal('expModal'); toast(editing.id ? 'Expense updated ✓' : 'Expense added ✓'); }
   }
   $('expForm').addEventListener('submit', function (e) { e.preventDefault(); saveExpense(false); });
